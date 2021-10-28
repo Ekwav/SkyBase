@@ -23,31 +23,20 @@ namespace Coflnet.Sky.McConnect.Controllers
             db = context;
         }
 
+        //TODO: Gleiche Klasse für hier und in den Command-Klassen verwenden (NewFlipTrackingModel & TrackFliipEventModel)
+
         [HttpPost]
-        [Route("copy/{auctionId}")]
-        public Task<User> GetConnections(string userId)
+        [Route("newFlip")]
+        public Task<User> trackFlip([FromBody] NewFlipTrackingModel flip)
         {
-            return GetOrCreateUser(userId);
+            // TODO
         }
 
-        private async Task<User> GetOrCreateUser(string userId)
-        {
-            var user = await db.Users.Where(u => u.ExternalId == userId).Include(u => u.Accounts).FirstOrDefaultAsync();
-            if (user == null)
-            {
-                user = new User() { ExternalId = userId };
-                db.Users.Add(user);
-                await db.SaveChangesAsync();
-            }
-
-            return user;
-        }
-
-        [HttpGet]
-        [Route("minecraft/{mcUuid}")]
-        public async Task<User> GetUser(string mcUuid)
-        {
-            return await db.McIds.Where(id => id.AccountUuid == mcUuid).Select(id => id.User).FirstOrDefaultAsync();
+        [HttpPost]
+        [Route("trackFlipEvent")]
+        public async Task<User> GetUser(FlipEventTrackingModel mcUuid)
+        {return await db.McIds.Where(id => id.AccountUuid == mcUuid).Select(id => id.User).FirstOrDefaultAsync();
+            // TODO
         }
     }
 }
