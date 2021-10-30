@@ -1,25 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Coflnet.Sky.McConnect.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Coflnet.Sky.SkyAuctionTracker.Models;
+using System;
 
-namespace Coflnet.Sky.McConnect.Controllers
+namespace Coflnet.Sky.SkyAuctionTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class TrackerController : ControllerBase
     {
-        private readonly ILogger<ConnectController> _logger;
-        private readonly ConnectContext db;
-        private readonly ConnectService connectService;
+        private readonly TrackerDbContext db;
 
-        public TrackerController(ILogger<ConnectController> logger, ConnectContext context)
+        public TrackerController(TrackerDbContext context)
         {
-            _logger = logger;
             db = context;
         }
 
@@ -27,16 +21,20 @@ namespace Coflnet.Sky.McConnect.Controllers
 
         [HttpPost]
         [Route("newFlip")]
-        public Task<User> trackFlip([FromBody] NewFlipTrackingModel flip)
+        public async Task<Flip> trackFlip([FromBody] Flip flip)
         {
-            // TODO
+            db.Flips.Add(flip);
+            await db.SaveChangesAsync();
+            return flip;
         }
 
         [HttpPost]
         [Route("trackFlipEvent")]
-        public async Task<User> GetUser(FlipEventTrackingModel mcUuid)
-        {return await db.McIds.Where(id => id.AccountUuid == mcUuid).Select(id => id.User).FirstOrDefaultAsync();
-            // TODO
+        public async Task<FlipEvent> trackFlipEvent(FlipEvent flipEvent)
+        {
+            db.FlipEvents.Add(flipEvent);
+            await db.SaveChangesAsync();
+            return flipEvent;
         }
     }
 }
