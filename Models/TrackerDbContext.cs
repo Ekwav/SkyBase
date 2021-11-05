@@ -18,5 +18,24 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         : base(options)
         {
         }
+
+        /// <summary>
+        /// Configures additional relations and indexes
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<FlipEvent>(entity =>
+            {
+                entity.HasIndex(e => new { e.AuctionUUID, e.FlipEventType, e.PlayerUUID }).IsUnique();
+            });
+
+            modelBuilder.Entity<Flip>(entity =>
+            {
+                entity.HasIndex(e => new { e.AuctionUUID }).IsUnique();
+            });
+        }
     }
 }
