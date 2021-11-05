@@ -1,53 +1,75 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Coflnet.Sky.McConnect.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Coflnet.Sky.SkyAuctionTracker.Models;
+using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace Coflnet.Sky.McConnect.Controllers
+namespace Coflnet.Sky.SkyAuctionTracker.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class TrackerController : ControllerBase
     {
-        private readonly ILogger<ConnectController> _logger;
-        private readonly ConnectContext db;
-        private readonly ConnectService connectService;
+        private readonly TrackerDbContext db;
 
-        public TrackerController(ILogger<ConnectController> logger, ConnectContext context)
+        public TrackerController(TrackerDbContext context)
         {
-            _logger = logger;
             db = context;
         }
 
         [HttpPost]
-        [Route("copy/{auctionId}")]
-        public Task<User> GetConnections(string userId)
+        [Route("newFlip/{auctionUUID}")]
+        public async Task<Flip> trackFlip([FromBody] Flip flip, string auctionUUID)
         {
-            return GetOrCreateUser(userId);
-        }
-
-        private async Task<User> GetOrCreateUser(string userId)
-        {
-            var user = await db.Users.Where(u => u.ExternalId == userId).Include(u => u.Accounts).FirstOrDefaultAsync();
-            if (user == null)
+            if (flip.Timestamp == default)
             {
-                user = new User() { ExternalId = userId };
-                db.Users.Add(user);
-                await db.SaveChangesAsync();
+                flip.Timestamp = DateTime.Now;
             }
+            flip.AuctionUUID = GetId(auctionUUID);
 
-            return user;
+            var flipAlreadyExists = await db.Flips.Where(f => f.AuctionUUID == flip.AuctionUUID && f.FinderType == flip.FinderType).AnyAsync();
+            if (flipAlreadyExists)
+            {
+                return flip;
+            }
+            db.Flips.Add(flip);
+            await db.SaveChangesAsync();
+            return flip;
         }
 
-        [HttpGet]
-        [Route("minecraft/{mcUuid}")]
-        public async Task<User> GetUser(string mcUuid)
+        [HttpPost]
+        [Route("flipEvent/{auctionUUID}")]
+        public async Task<FlipEvent> trackFlipEvent(FlipEvent flipEvent, string auctionUUID)
         {
-            return await db.McIds.Where(id => id.AccountUuid == mcUuid).Select(id => id.User).FirstOrDefaultAsync();
+            if (flipEvent.Timestamp == default)
+            {
+                flipEvent.Timestamp = DateTime.Now;
+            }
+            flipEvent.AuctionUUID = GetId(auctionUUID);
+
+            var flipEventAlreadyExists = await db.FlipEvents.Where(f => f.AuctionUUID == flipEvent.AuctionUUID && f.FlipEventType == flipEvent.FlipEventType && f.PlayerUUID == flipEvent.PlayerUUID).AnyAsync();
+            if (flipEventAlreadyExists)
+            {
+                return flipEvent;
+            }
+            db.FlipEvents.Add(flipEvent);
+            await db.SaveChangesAsync();
+            return flipEvent;
+        }
+
+        public long GetId(string uuid)
+        {
+            if (uuid.Length > 17)
+                uuid = uuid.Substring(0, 17);
+            var builder = new System.Text.StringBuilder(uuid);
+            builder.Remove(12, 1);
+            builder.Remove(16, uuid.Length - 17);
+            var id = Convert.ToInt64(builder.ToString(), 16);
+            if (id == 0)
+                id = 1; // allow uId == 0 to be false if not calculated
+            return id;
         }
     }
 }
