@@ -23,7 +23,10 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         [Route("newFlip/{auctionUUID}")]
         public async Task<Flip> trackFlip([FromBody] Flip flip, string auctionUUID)
         {
-
+            if (flip.Timestamp == default)
+            {
+                flip.Timestamp = DateTime.Now;
+            }
             flip.AuctionUUID = GetId(auctionUUID);
 
             var flipAlreadyExists = await db.Flips.Where(f => f.AuctionUUID == flip.AuctionUUID && f.FinderType == flip.FinderType).AnyAsync();
@@ -40,7 +43,10 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         [Route("trackFlipEvent/{auctionUUID}")]
         public async Task<FlipEvent> trackFlipEvent(FlipEvent flipEvent, string auctionUUID)
         {
-
+            if (flipEvent.Timestamp == default)
+            {
+                flipEvent.Timestamp = DateTime.Now;
+            }
             flipEvent.AuctionUUID = GetId(auctionUUID);
 
             var flipEventAlreadyExists = await db.FlipEvents.Where(f => f.AuctionUUID == flipEvent.AuctionUUID && f.FlipEventType == flipEvent.FlipEventType && f.PlayerUUID == flipEvent.PlayerUUID).AnyAsync();

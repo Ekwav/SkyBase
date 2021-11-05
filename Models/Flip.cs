@@ -12,7 +12,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         [JsonIgnore]
         public int Id { get; set; }
 
-        [DataMember(Name = "auctionUUID")]
+        [IgnoreDataMember]
+        [JsonIgnore]
         public long AuctionUUID { get; set; }
         [DataMember(Name = "targetPrice")]
         public int TargetPrice { get; set; }

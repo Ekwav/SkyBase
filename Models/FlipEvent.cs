@@ -13,7 +13,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         public int Id { get; set; }
         [DataMember(Name = "playerUUID")]
         public long PlayerUUID { get; set; }
-        [DataMember(Name = "auctionUUID")]
+        [IgnoreDataMember]
+        [JsonIgnore]
         public long AuctionUUID { get; set; }
         [DataMember(Name = "flipEventType")]
         public FlipEventType FlipEventType { get; set; }
