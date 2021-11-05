@@ -29,6 +29,6 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         FLIPPER = 1,
         LOWEST_BIN = 2,
         SNIPER = 4,
-        KI = 8
+        AI = 8
     }
 }
