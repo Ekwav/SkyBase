@@ -40,7 +40,7 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpPost]
-        [Route("trackFlipEvent/{auctionUUID}")]
+        [Route("flipEvent/{auctionUUID}")]
         public async Task<FlipEvent> trackFlipEvent(FlipEvent flipEvent, string auctionUUID)
         {
             if (flipEvent.Timestamp == default)
