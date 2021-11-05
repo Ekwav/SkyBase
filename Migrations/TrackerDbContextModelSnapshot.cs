@@ -39,8 +39,7 @@ namespace SkyAuctionTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionUUID")
-                        .IsUnique();
+                    b.HasIndex("AuctionUUID");
 
                     b.ToTable("Flips");
                 });
@@ -67,8 +66,9 @@ namespace SkyAuctionTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionUUID", "FlipEventType", "PlayerUUID")
-                        .IsUnique();
+                    b.HasIndex("PlayerUUID");
+
+                    b.HasIndex("AuctionUUID", "FlipEventType");
 
                     b.ToTable("FlipEvents");
                 });

@@ -48,16 +48,19 @@ namespace SkyAuctionTracker.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlipEvents_AuctionUUID_FlipEventType_PlayerUUID",
+                name: "IX_FlipEvents_AuctionUUID_FlipEventType",
                 table: "FlipEvents",
-                columns: new[] { "AuctionUUID", "FlipEventType", "PlayerUUID" },
-                unique: true);
+                columns: new[] { "AuctionUUID", "FlipEventType" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlipEvents_PlayerUUID",
+                table: "FlipEvents",
+                column: "PlayerUUID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flips_AuctionUUID",
                 table: "Flips",
-                column: "AuctionUUID",
-                unique: true);
+                column: "AuctionUUID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

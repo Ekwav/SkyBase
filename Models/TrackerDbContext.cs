@@ -29,12 +29,13 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
 
             modelBuilder.Entity<FlipEvent>(entity =>
             {
-                entity.HasIndex(e => new { e.AuctionUUID, e.FlipEventType, e.PlayerUUID }).IsUnique();
+                entity.HasIndex(e => new { e.AuctionUUID, e.FlipEventType });
+                entity.HasIndex(e => e.PlayerUUID);
             });
 
             modelBuilder.Entity<Flip>(entity =>
             {
-                entity.HasIndex(e => new { e.AuctionUUID }).IsUnique();
+                entity.HasIndex(e => new { e.AuctionUUID });
             });
         }
     }

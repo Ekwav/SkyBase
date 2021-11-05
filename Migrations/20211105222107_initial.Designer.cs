@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SkyAuctionTracker.Migrations
 {
     [DbContext(typeof(TrackerDbContext))]
-    [Migration("20211105220738_initial")]
+    [Migration("20211105222107_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,8 +41,7 @@ namespace SkyAuctionTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionUUID")
-                        .IsUnique();
+                    b.HasIndex("AuctionUUID");
 
                     b.ToTable("Flips");
                 });
@@ -69,8 +68,9 @@ namespace SkyAuctionTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionUUID", "FlipEventType", "PlayerUUID")
-                        .IsUnique();
+                    b.HasIndex("PlayerUUID");
+
+                    b.HasIndex("AuctionUUID", "FlipEventType");
 
                     b.ToTable("FlipEvents");
                 });
