@@ -12,22 +12,22 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         [JsonIgnore]
         public int Id { get; set; }
         [DataMember(Name = "playerUUID")]
-        public string PlayerUUID { get; set; }
+        public long PlayerUUID { get; set; }
         [DataMember(Name = "auctionUUID")]
-        public int AuctionUUID { get; set; }
-        [DataMember(Name = "flipTrackerEvent")]
-        public FlipTrackerEvent FlipTrackerEvent { get; set; }
+        public long AuctionUUID { get; set; }
+        [DataMember(Name = "flipEventType")]
+        public FlipEventType FlipEventType { get; set; }
         [System.ComponentModel.DataAnnotations.Timestamp]
         [DataMember(Name = "timestamp")]
         public DateTime Timestamp { get; set; }
     }
 
-    public enum FlipTrackerEvent
+    public enum FlipEventType
     {
-        PURCHASE_START = 1,
-        PURCHASE_CONFIRM = 2,
-        FLIP_RECEIVE = 4,
-        FLIP_CLICK = 8,
+        FLIP_RECEIVE = 1,
+        FLIP_CLICK = 2,
+        PURCHASE_START = 4,
+        PURCHASE_CONFIRM = 8,
         AUCTION_SOLD = 16
     }
 }

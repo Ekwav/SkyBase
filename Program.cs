@@ -7,9 +7,6 @@ namespace Coflnet.Sky.SkyAuctionTracker
     {
         public static void Main(string[] args)
         {
-
-            //SubscribeEngine.Instance.LoadFromDb();
-            //RunIsolatedForever(SubscribeEngine.Instance.ProcessQueues, "SubscribeEngine");
             CreateHostBuilder(args).Build().Run();
         }
 
