@@ -3,3 +3,6 @@ obj
 
 # Visual Studio Code
 .vscode
+!Client/generate.sh
+Client/out
+/Client/*nupkg

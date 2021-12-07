@@ -22,7 +22,7 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpPost]
-        [Route("newFlip/{auctionUUID}")]
+        [Route("flip/{auctionUUID}")]
         public async Task<Flip> trackFlip([FromBody] Flip flip, string auctionUUID)
         {
             if (flip.Timestamp == default)
@@ -42,7 +42,7 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpPost]
-        [Route("flipEvent/{auctionUUID}")]
+        [Route("event/{auctionUUID}")]
         public async Task<FlipEvent> trackFlipEvent(FlipEvent flipEvent, string auctionUUID)
         {
             if (flipEvent.Timestamp == default)
@@ -62,8 +62,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpGet]
-        [Route("lastFlipTime")]
-        public async Task<DateTime> getLastFlipTime()
+        [Route("flip/time")]
+        public async Task<DateTime> GetLastFlipTime()
         {
 
             var flipEventAlreadyExists = await db.FlipEvents.OrderByDescending(f => f.Id).FirstOrDefaultAsync();
@@ -75,8 +75,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpGet]
-        [Route("flipRecieveTimes")]
-        public async Task<double> getFlipRecieveTimes(int number = 100)
+        [Route("flip/receive/times")]
+        public async Task<double> GetFlipRecieveTimes(int number = 100)
         {
 
             var flips = await db.Flips.OrderByDescending(f => f.Id).Take(number).ToListAsync();
@@ -91,7 +91,7 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
 
         [HttpGet]
         [Route("flipBuyingTimeForPlayer")]
-        public async Task<double> getFlipBuyingTimeForPlayer(long playerUUID, int number = 50)
+        public async Task<double> GetFlipBuyingTimeForPlayer(long playerUUID, int number = 50)
         {
 
             var purchaseConfirmEvents = await db.FlipEvents.Where(flipEvent => flipEvent.PlayerUUID == playerUUID && flipEvent.FlipEventType == FlipEventType.PURCHASE_CONFIRM).OrderByDescending(f => f.Id).Take(number).ToListAsync();
@@ -107,9 +107,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
 
         [HttpGet]
         [Route("flipsBoughtBeforeFound")]
-        public async Task<List<Flip>> getFlipsBoughtBeforeFound(long playerUUID)
+        public async Task<List<Flip>> GetFlipsBoughtBeforeFound(long playerUUID)
         {
-
             var purchaseConfirmEvents = await db.FlipEvents.Where(flipEvent => flipEvent.PlayerUUID == playerUUID && flipEvent.FlipEventType == FlipEventType.AUCTION_SOLD).ToListAsync();
 
             var flips = new List<Flip>();
@@ -125,34 +124,34 @@ namespace Coflnet.Sky.SkyAuctionTracker.Controllers
         }
 
         [HttpGet]
-        [Route("flipsForAuction")]
-        public async Task<List<Flip>> getFlipsOfAuction(long auctionUUid)
+        [Route("flips/{auctionId}")]
+        public async Task<List<Flip>> GetFlipsOfAuction(long auctionId)
         {
 
-            var flips = await db.Flips.Where(flip => flip.AuctionUUID == auctionUUid).ToListAsync();
+            var flips = await db.Flips.Where(flip => flip.AuctionUUID == auctionId).ToListAsync();
             return flips;
         }
 
         [HttpGet]
-        [Route("numberOfActiveFlipperUsers")]
-        public async Task<int> getNumberOfActiveFlipperUsers()
+        [Route("/users/active/count")]
+        public async Task<int> GetNumberOfActiveFlipperUsers()
         {
 
             return await db.FlipEvents.Where(flipEvent => flipEvent.FlipEventType == FlipEventType.FLIP_RECEIVE && DateTime.Now.Subtract(flipEvent.Timestamp).TotalMinutes > 3).GroupBy(flipEvent => flipEvent.PlayerUUID).CountAsync();
         }
 
         [HttpGet]
-        [Route("getOutspeedTime")]
-        public async Task<ValueTuple<long, double>> getOutspeedTime(long auctionUUID, long playerUUID)
+        [Route("/flip/outspeed/{auctionId}/{playerUUID}")]
+        public async Task<ValueTuple<long, double>> GetOutspeedTime(long auctionId, long playerUUID)
         {
-            var flipClickEvent = db.FlipEvents.Where(flip => flip.AuctionUUID == auctionUUID && flip.FlipEventType == FlipEventType.FLIP_CLICK && flip.PlayerUUID == playerUUID).SingleOrDefault();
-            var flipSoldEvent = db.FlipEvents.Where(flip => flip.AuctionUUID == auctionUUID && flip.FlipEventType == FlipEventType.AUCTION_SOLD).SingleOrDefault();
+            var flipClickEvent = db.FlipEvents.Where(flip => flip.AuctionUUID == auctionId && flip.FlipEventType == FlipEventType.FLIP_CLICK && flip.PlayerUUID == playerUUID).SingleOrDefault();
+            var flipSoldEvent = db.FlipEvents.Where(flip => flip.AuctionUUID == auctionId && flip.FlipEventType == FlipEventType.AUCTION_SOLD).SingleOrDefault();
 
             return new ValueTuple<long, double>(flipSoldEvent.PlayerUUID, (flipSoldEvent.Timestamp - flipClickEvent.Timestamp).TotalSeconds);
         }
 
 
-        public long GetId(string uuid)
+        private long GetId(string uuid)
         {
             if (uuid.Length > 17)
                 uuid = uuid.Substring(0, 17);
