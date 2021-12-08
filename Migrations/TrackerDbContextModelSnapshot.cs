@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace SkyAuctionTracker.Migrations
+#nullable disable
+
+namespace SkyFlipTracker.Migrations
 {
     [DbContext(typeof(TrackerDbContext))]
     partial class TrackerDbContextModelSnapshot : ModelSnapshot
@@ -14,8 +16,8 @@ namespace SkyAuctionTracker.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.11");
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Coflnet.Sky.SkyAuctionTracker.Models.Flip", b =>
                 {
@@ -23,7 +25,7 @@ namespace SkyAuctionTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<long>("AuctionUUID")
+                    b.Property<long>("AuctionId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("FinderType")
@@ -39,7 +41,7 @@ namespace SkyAuctionTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuctionUUID");
+                    b.HasIndex("AuctionId");
 
                     b.ToTable("Flips");
                 });
@@ -50,13 +52,10 @@ namespace SkyAuctionTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<long>("AuctionUUID")
+                    b.Property<long>("AuctionId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("FlipEventType")
-                        .HasColumnType("int");
-
-                    b.Property<long>("PlayerUUID")
+                    b.Property<long>("PlayerId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Timestamp")
@@ -64,11 +63,14 @@ namespace SkyAuctionTracker.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("PlayerUUID");
+                    b.HasIndex("PlayerId");
 
-                    b.HasIndex("AuctionUUID", "FlipEventType");
+                    b.HasIndex("AuctionId", "Type");
 
                     b.ToTable("FlipEvents");
                 });

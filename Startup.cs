@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using Coflnet.Sky.SkyAuctionTracker.Models;
+using Coflnet.Sky.SkyAuctionTracker.Services;
+using hypixel;
 using Jaeger.Samplers;
 using Jaeger.Senders;
 using Jaeger.Senders.Thrift;
@@ -54,42 +56,9 @@ namespace Coflnet.Sky.SkyAuctionTracker
                     .EnableSensitiveDataLogging() // <-- These two calls are optional but help
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
-            services.AddHostedService<TrackerEngine>();
-            AddJaeger(services);
-        }
-
-        public static void AddJaeger(IServiceCollection services)
-        {
-            services.AddSingleton<ITracer>(serviceProvider =>
-            {
-                ILoggerFactory loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-                IConfiguration iConfiguration = serviceProvider.GetRequiredService<IConfiguration>();
-
-                Jaeger.Configuration.SenderConfiguration.DefaultSenderResolver = new SenderResolver(loggerFactory)
-                        .RegisterSenderFactory<ThriftSenderFactory>();
-
-                var samplingRate = 0.10d;
-                var lowerBoundInSeconds = 30d;
-                ISampler sampler = new GuaranteedThroughputSampler(samplingRate, lowerBoundInSeconds);
-                var config = Jaeger.Configuration.FromIConfiguration(loggerFactory, iConfiguration);
-
-                ITracer tracer = config.GetTracerBuilder()
-                    .WithSampler(sampler)
-                    .Build();
-
-                try
-                {
-                    GlobalTracer.Register(tracer);
-                }
-                catch (System.Exception)
-                {
-                    loggerFactory.CreateLogger("jager").LogError("Could not register new tracer");
-                }
-
-
-                return tracer;
-            });
-            services.AddOpenTracing();
+            services.AddHostedService<TrackerBackgroundService>();
+            services.AddJaeger();
+            services.AddTransient<TrackerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

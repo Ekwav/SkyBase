@@ -11,13 +11,12 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         [IgnoreDataMember]
         [JsonIgnore]
         public int Id { get; set; }
-        [DataMember(Name = "playerUUID")]
-        public long PlayerUUID { get; set; }
-        [IgnoreDataMember]
-        [JsonIgnore]
-        public long AuctionUUID { get; set; }
-        [DataMember(Name = "flipEventType")]
-        public FlipEventType FlipEventType { get; set; }
+        [DataMember(Name = "playerId")]
+        public long PlayerId { get; set; }
+        [DataMember(Name = "auctionId")]
+        public long AuctionId { get; set; }
+        [DataMember(Name = "type")]
+        public FlipEventType Type { get; set; }
         [System.ComponentModel.DataAnnotations.Timestamp]
         [DataMember(Name = "timestamp")]
         public DateTime Timestamp { get; set; }
@@ -29,6 +28,8 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         FLIP_CLICK = 2,
         PURCHASE_START = 4,
         PURCHASE_CONFIRM = 8,
-        AUCTION_SOLD = 16
+        AUCTION_SOLD = 16,
+        UPVOTE = 32,
+        DOWNVOTE = 64
     }
 }
