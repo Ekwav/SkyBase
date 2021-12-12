@@ -1,16 +1,16 @@
 using System.Threading.Tasks;
-using Coflnet.Sky.SkyAuctionTracker.Models;
+using Coflnet.Sky.Base.Models;
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace Coflnet.Sky.SkyAuctionTracker.Services
+namespace Coflnet.Sky.Base.Services
 {
-    public class TrackerService
+    public class BaseService
     {
-        private TrackerDbContext db;
+        private BaseDbContext db;
 
-        public TrackerService(TrackerDbContext db)
+        public BaseService(BaseDbContext db)
         {
             this.db = db;
         }

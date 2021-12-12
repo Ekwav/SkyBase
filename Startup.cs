@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Coflnet.Sky.SkyAuctionTracker.Models;
-using Coflnet.Sky.SkyAuctionTracker.Services;
+using Coflnet.Sky.Base.Models;
+using Coflnet.Sky.Base.Services;
 using hypixel;
 using Jaeger.Samplers;
 using Jaeger.Senders;
@@ -19,7 +19,7 @@ using OpenTracing;
 using OpenTracing.Util;
 using Prometheus;
 
-namespace Coflnet.Sky.SkyAuctionTracker
+namespace Coflnet.Sky.Base
 {
     public class Startup
     {
@@ -36,7 +36,7 @@ namespace Coflnet.Sky.SkyAuctionTracker
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkyTracker", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SkyBase", Version = "v1" });
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -50,15 +50,15 @@ namespace Coflnet.Sky.SkyAuctionTracker
             var serverVersion = new MariaDbServerVersion(new Version(Configuration["MARIADB_VERSION"]));
 
             // Replace 'YourDbContext' with the name of your own DbContext derived class.
-            services.AddDbContext<TrackerDbContext>(
+            services.AddDbContext<BaseDbContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(Configuration["DB_CONNECTION"], serverVersion)
                     .EnableSensitiveDataLogging() // <-- These two calls are optional but help
                     .EnableDetailedErrors()       // <-- with debugging (remove for production).
             );
-            services.AddHostedService<TrackerBackgroundService>();
+            services.AddHostedService<BaseBackgroundService>();
             services.AddJaeger();
-            services.AddTransient<TrackerService>();
+            services.AddTransient<BaseService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +71,7 @@ namespace Coflnet.Sky.SkyAuctionTracker
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkyTracker v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkyBase v1");
                 c.RoutePrefix = "api";
             });
 

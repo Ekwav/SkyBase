@@ -1,20 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Coflnet.Sky.SkyAuctionTracker.Models
+namespace Coflnet.Sky.Base.Models
 {
     /// <summary>
     /// <see cref="DbContext"/> For flip tracking
     /// </summary>
-    public class TrackerDbContext : DbContext
+    public class BaseDbContext : DbContext
     {
-        public DbSet<FlipEvent> FlipEvents { get; set; }
         public DbSet<Flip> Flips { get; set; }
 
         /// <summary>
-        /// Creates a new instance of <see cref="TrackerDbContext"/>
+        /// Creates a new instance of <see cref="BaseDbContext"/>
         /// </summary>
         /// <param name="options"></param>
-        public TrackerDbContext(DbContextOptions<TrackerDbContext> options)
+        public BaseDbContext(DbContextOptions<BaseDbContext> options)
         : base(options)
         {
         }
@@ -26,12 +25,6 @@ namespace Coflnet.Sky.SkyAuctionTracker.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<FlipEvent>(entity =>
-            {
-                entity.HasIndex(e => new { e.AuctionId, e.Type });
-                entity.HasIndex(e => e.PlayerId);
-            });
 
             modelBuilder.Entity<Flip>(entity =>
             {

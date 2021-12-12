@@ -3,7 +3,7 @@ using System;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Coflnet.Sky.SkyAuctionTracker.Models
+namespace Coflnet.Sky.Base.Models
 {
     [DataContract]
     public class Flip

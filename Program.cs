@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Coflnet.Sky.SkyAuctionTracker
+namespace Coflnet.Sky.Base
 {
     public class Program
     {
