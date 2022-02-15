@@ -18,16 +18,14 @@ namespace Coflnet.Sky.Base.Controllers
     [Route("[controller]")]
     public class BaseController : ControllerBase
     {
-        private readonly BaseDbContext db;
         private readonly BaseService service;
 
         /// <summary>
         /// Creates a new instance of <see cref="BaseController"/>
         /// </summary>
-        /// <param name="context"></param>
-        public BaseController(BaseDbContext context, BaseService service)
+        /// <param name="service"></param>
+        public BaseController(BaseService service)
         {
-            db = context;
             this.service = service;
         }
 

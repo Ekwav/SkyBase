@@ -30,22 +30,5 @@ namespace Coflnet.Sky.Base.Services
             await db.SaveChangesAsync();
             return flip;
         }
-
-        public async Task<FlipEvent> AddEvent(FlipEvent flipEvent)
-        {
-            if (flipEvent.Timestamp == default)
-            {
-                flipEvent.Timestamp = DateTime.Now;
-            }
-            var flipEventAlreadyExists = await db.FlipEvents.Where(f => f.AuctionId == flipEvent.AuctionId && f.Type == flipEvent.Type && f.PlayerId == flipEvent.PlayerId)
-                    .AnyAsync();
-            if (flipEventAlreadyExists)
-            {
-                return flipEvent;
-            }
-            db.FlipEvents.Add(flipEvent);
-            await db.SaveChangesAsync();
-            return flipEvent;
-        }
     }
 }

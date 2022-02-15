@@ -75,7 +75,8 @@ namespace Coflnet.Sky.Base
                 c.RoutePrefix = "api";
             });
 
-            app.UseHttpsRedirection();
+            app.UseResponseCaching();
+            app.UseResponseCompression();
 
             app.UseRouting();
 

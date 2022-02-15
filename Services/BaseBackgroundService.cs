@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
-using System;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Coflnet.Sky.Base.Controllers;
 
@@ -18,6 +18,7 @@ namespace Coflnet.Sky.Base.Services
         private IServiceScopeFactory scopeFactory;
         private IConfiguration config;
         private ILogger<BaseBackgroundService> logger;
+        private Prometheus.Counter consumeCount = Prometheus.Metrics.CreateCounter("sky_base_conume", "How many messages were consumed");
 
         public BaseBackgroundService(
             IServiceScopeFactory scopeFactory, IConfiguration config, ILogger<BaseBackgroundService> logger)
@@ -38,16 +39,20 @@ namespace Coflnet.Sky.Base.Services
             // make sure all migrations are applied
             await context.Database.MigrateAsync();
 
-            var flipCons = Coflnet.Kafka.KafkaConsumer.Consume<LowPricedAuction>(config["KAFKA_HOST"], config["TOPICS:LOW_PRICED"], async lp =>
+            var flipCons = Coflnet.Kafka.KafkaConsumer.ConsumeBatch<LowPricedAuction>(config["KAFKA_HOST"], config["TOPICS:LOW_PRICED"], async batch =>
             {
                 var service = GetService();
-                await service.AddFlip(new Flip()
+                foreach (var lp in batch)
                 {
-                    AuctionId = lp.UId,
-                    FinderType = lp.Finder,
-                    TargetPrice = lp.TargetPrice,
-                });
-            }, stoppingToken, "flipbase");
+                    await service.AddFlip(new Flip()
+                    {
+                        AuctionId = lp.UId,
+                        FinderType = lp.Finder,
+                        TargetPrice = lp.TargetPrice,
+                    });
+                }
+                consumeCount.Inc(batch.Count());
+            }, stoppingToken, "skybase");
 
             await Task.WhenAll(flipCons);
         }
