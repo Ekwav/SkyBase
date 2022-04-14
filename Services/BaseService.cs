@@ -21,11 +21,6 @@ namespace Coflnet.Sky.Base.Services
             {
                 flip.Timestamp = DateTime.Now;
             }
-            var flipAlreadyExists = await db.Flips.Where(f => f.AuctionId == flip.AuctionId && f.FinderType == flip.FinderType).AnyAsync();
-            if (flipAlreadyExists)
-            {
-                return flip;
-            }
             db.Flips.Add(flip);
             await db.SaveChangesAsync();
             return flip;

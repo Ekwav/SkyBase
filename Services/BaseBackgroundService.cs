@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Coflnet.Sky.Base.Controllers;
+using Coflnet.Sky.Core;
 
 namespace Coflnet.Sky.Base.Services
 {
@@ -44,12 +45,7 @@ namespace Coflnet.Sky.Base.Services
                 var service = GetService();
                 foreach (var lp in batch)
                 {
-                    await service.AddFlip(new Flip()
-                    {
-                        AuctionId = lp.UId,
-                        FinderType = lp.Finder,
-                        TargetPrice = lp.TargetPrice,
-                    });
+                    // do something
                 }
                 consumeCount.Inc(batch.Count());
             }, stoppingToken, "skybase");
