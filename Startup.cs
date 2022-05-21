@@ -59,6 +59,8 @@ namespace Coflnet.Sky.Base
             services.AddHostedService<BaseBackgroundService>();
             services.AddJaeger();
             services.AddTransient<BaseService>();
+            services.AddResponseCaching();
+            services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
