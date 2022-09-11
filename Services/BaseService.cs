@@ -4,26 +4,24 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace Coflnet.Sky.Base.Services
+namespace Coflnet.Sky.Base.Services;
+public class BaseService
 {
-    public class BaseService
+    private BaseDbContext db;
+
+    public BaseService(BaseDbContext db)
     {
-        private BaseDbContext db;
+        this.db = db;
+    }
 
-        public BaseService(BaseDbContext db)
+    public async Task<Flip> AddFlip(Flip flip)
+    {
+        if (flip.Timestamp == default)
         {
-            this.db = db;
+            flip.Timestamp = DateTime.Now;
         }
-
-        public async Task<Flip> AddFlip(Flip flip)
-        {
-            if (flip.Timestamp == default)
-            {
-                flip.Timestamp = DateTime.Now;
-            }
-            db.Flips.Add(flip);
-            await db.SaveChangesAsync();
-            return flip;
-        }
+        db.Flips.Add(flip);
+        await db.SaveChangesAsync();
+        return flip;
     }
 }
