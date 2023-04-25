@@ -4,19 +4,13 @@ using System.Reflection;
 using Coflnet.Sky.Base.Models;
 using Coflnet.Sky.Base.Services;
 using Coflnet.Sky.Core;
-using Jaeger.Samplers;
-using Jaeger.Senders;
-using Jaeger.Senders.Thrift;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using OpenTracing;
-using OpenTracing.Util;
 using Prometheus;
 
 namespace Coflnet.Sky.Base;
@@ -56,7 +50,7 @@ public class Startup
                 .EnableDetailedErrors()       // <-- with debugging (remove for production).
         );
         services.AddHostedService<BaseBackgroundService>();
-        services.AddJaeger();
+        services.AddJaeger(Configuration);
         services.AddTransient<BaseService>();
         services.AddResponseCaching();
         services.AddResponseCompression();

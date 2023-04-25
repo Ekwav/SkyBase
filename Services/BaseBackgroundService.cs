@@ -39,7 +39,7 @@ public class BaseBackgroundService : BackgroundService
         // make sure all migrations are applied
         await context.Database.MigrateAsync();
 
-        var flipCons = Coflnet.Kafka.KafkaConsumer.ConsumeBatch<LowPricedAuction>(config["KAFKA_HOST"], config["TOPICS:LOW_PRICED"], async batch =>
+        var flipCons = Coflnet.Kafka.KafkaConsumer.ConsumeBatch<LowPricedAuction>(config, config["TOPICS:LOW_PRICED"], async batch =>
         {
             var service = GetService();
             foreach (var lp in batch)
